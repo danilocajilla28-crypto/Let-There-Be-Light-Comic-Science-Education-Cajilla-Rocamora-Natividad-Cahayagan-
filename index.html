@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Let There Be Light — A Nuclear Energy Comic</title>
+
+  <!-- Google Fonts: Cinzel for display, Exo 2 for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES — THEME SYSTEM
+       Dark = Cherenkov radiation / nuclear neon on deep slate
+       Light = Scientific white / high-contrast clinical palette
+    ============================================================ */
+    :root {
+      /* Shared */
+      --accent:       #00d4ff;        /* Cherenkov blue */
+      --accent-glow:  #00d4ff88;
+      --accent-hot:   #39ff14;        /* radioactive green accent */
+      --accent-warm:  #ff6b35;        /* reactor orange */
+      --radius:       12px;
+      --transition:   0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    [data-theme="dark"] {
+      --bg:           #060d1a;
+      --bg-2:         #0b1629;
+      --bg-card:      #0f1f38;
+      --bg-card-2:    #112040;
+      --surface:      #162844;
+      --border:       #1e3a5f;
+      --text:         #e8f4f8;
+      --text-muted:   #7aa3c0;
+      --text-dim:     #3d6080;
+      --hero-grad:    radial-gradient(ellipse 80% 60% at 50% 0%, #003366 0%, #060d1a 70%);
+      --nav-bg:       rgba(6, 13, 26, 0.85);
+      --shadow:       0 8px 40px rgba(0,212,255,0.12);
+      --glow-text:    0 0 20px rgba(0,212,255,0.5), 0 0 60px rgba(0,212,255,0.2);
+    }
+
+    [data-theme="light"] {
+      --bg:           #f0f5fa;
+      --bg-2:         #e4eef8;
+      --bg-card:      #ffffff;
+      --bg-card-2:    #f7fafd;
+      --surface:      #dde9f4;
+      --border:       #bbd0e8;
+      --text:         #0d1f35;
+      --text-muted:   #3d6080;
+      --text-dim:     #8aacc4;
+      --hero-grad:    radial-gradient(ellipse 80% 60% at 50% 0%, #c2ddf5 0%, #f0f5fa 70%);
+      --nav-bg:       rgba(240, 245, 250, 0.88);
+      --shadow:       0 8px 40px rgba(0,100,180,0.10);
+      --glow-text:    none;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    ::selection { background: var(--accent); color: #000; }
+
+    /* ============================================================
+       SCROLLBAR
+    ============================================================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ============================================================
+       STICKY NAVBAR
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition);
+    }
+
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color var(--transition);
+    }
+    .nav-link:hover { color: var(--accent); }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: all var(--transition);
+      font-size: 0.75rem;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--text);
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+    .toggle-icon { font-size: 1rem; transition: transform 0.4s ease; }
+    [data-theme="light"] .toggle-icon { transform: rotate(180deg); }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      background: var(--hero-grad);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated atomic rings behind hero text */
+    .atom-bg {
+      position: absolute;
+      width: 600px; height: 600px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.07;
+    }
+
+    [data-theme="light"] .atom-bg { opacity: 0.06; }
+
+    .atom-ring {
+      position: absolute;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform-origin: center;
+      animation: spin linear infinite;
+    }
+
+    .atom-ring:nth-child(1) {
+      width: 560px; height: 220px;
+      margin-top: -110px; margin-left: -280px;
+      animation-duration: 8s;
+    }
+    .atom-ring:nth-child(2) {
+      width: 560px; height: 220px;
+      margin-top: -110px; margin-left: -280px;
+      animation-duration: 10s;
+      transform: rotate(60deg);
+      animation-direction: reverse;
+    }
+    .atom-ring:nth-child(3) {
+      width: 560px; height: 220px;
+      margin-top: -110px; margin-left: -280px;
+      animation-duration: 12s;
+      transform: rotate(120deg);
+    }
+    .atom-nucleus {
+      position: absolute;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 30px 10px var(--accent-glow), 0 0 60px 20px rgba(0,212,255,0.15);
+    }
+
+    @keyframes spin { from { transform: rotate(var(--start, 0deg)); } to { transform: rotate(calc(var(--start, 0deg) + 360deg)); } }
+
+    /* Particle dots */
+    .particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: float-up linear infinite;
+      opacity: 0;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-20px) scale(1); opacity: 0; }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3rem, 10vw, 7.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-shadow: var(--glow-text);
+      margin-bottom: 0.4em;
+      animation: fadeUp 1s ease 0.15s both;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero-tagline {
+      font-family: 'Exo 2', sans-serif;
+      font-style: italic;
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 3rem;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      animation: fadeUp 1s ease 0.45s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: var(--radius);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px var(--accent-glow), 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       SYNOPSIS STRIP
+    ============================================================ */
+    .synopsis-strip {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2rem;
+      text-align: center;
+    }
+
+    .synopsis-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .synopsis-text {
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .synopsis-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       AUTHORS SECTION
+    ============================================================ */
+    #authors {
+      padding: 6rem 2rem;
+      background: var(--bg);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.2rem auto;
+      max-width: 300px;
+      justify-content: center;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+    /* Group bio */
+    .group-bio {
+      max-width: 640px;
+      margin: 0 auto 4rem;
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    /* Author cards grid */
+    .authors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .author-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .author-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .author-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .author-card:hover::before { opacity: 1; }
+
+    .author-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 1.2rem;
+      border: 2.5px solid var(--border);
+      object-fit: cover;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      transition: border-color var(--transition);
+      overflow: hidden;
+    }
+    .author-card:hover .author-avatar { border-color: var(--accent); }
+
+    /* Placeholder avatar with initials */
+    .avatar-initials {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 1.2rem;
+      border: 2.5px solid var(--border);
+      background: linear-gradient(135deg, var(--surface) 0%, var(--bg-card-2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .author-card:hover .avatar-initials {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    /* Atomic symbol behind initials */
+    .avatar-initials::after {
+      content: '⚛';
+      position: absolute;
+      font-size: 4rem;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+
+    .author-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .author-role {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'Orbitron', monospace;
+      margin-bottom: 0.7rem;
+    }
+
+    .author-bio {
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       COMIC VIEWER SECTION
+    ============================================================ */
+    #reader {
+      padding: 5rem 1rem 6rem;
+      background: var(--bg-2);
+    }
+
+    .reader-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Mode toggle pills */
+    .mode-toggle {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 4px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* ---- EMBED & VIEWER STYLES ---- */
+    .comic-viewer-container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: none;
+      transition: all var(--transition);
+      position: relative;
+    }
+    .comic-viewer-container.active {
+      display: block;
+    }
+
+    .back-btn {
+      display: none;
+      position: absolute;
+      top: max(1rem, env(safe-area-inset-top, 1rem));
+      left: max(1rem, env(safe-area-inset-left, 1rem));
+      z-index: 10000;
+      background: rgba(6, 13, 26, 0.85);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all var(--transition);
+      /* Touch target size for mobile */
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .back-btn:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .reader-embed-wrapper {
+      width: 100%;
+      margin: 0 auto 2rem;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: var(--bg-card);
+      position: relative;
+    }
+
+    .reader-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .reader-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+    .reader-embed-wrapper iframe {
+      display: block;
+      width: 100%;
+      height: 70vh;
+      min-height: 500px;
+      border: none;
+    }
+
+    /* ---- NATIVE FULLSCREEN STYLES ---- */
+    .comic-viewer-container:fullscreen {
+      max-width: 100%;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      border: none;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .comic-viewer-container:fullscreen .reader-embed-wrapper {
+      max-width: 100%;
+      height: 100vh;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .comic-viewer-container:fullscreen iframe {
+      flex: 1;
+      height: 100vh;
+      min-height: 100vh;
+    }
+    .comic-viewer-container:fullscreen .reader-label {
+      display: none; /* Hide header frame for maximum immersion */
+    }
+    .comic-viewer-container:fullscreen .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Webkit/Moz Fallbacks for Fullscreen */
+    .comic-viewer-container:-webkit-full-screen {
+      max-width: 100%; width: 100vw; height: 100vh; margin: 0; background: #000;
+    }
+    .comic-viewer-container:-webkit-full-screen .reader-embed-wrapper {
+      max-width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0;
+    }
+    .comic-viewer-container:-webkit-full-screen iframe { height: 100vh; min-height: 100vh; }
+    .comic-viewer-container:-webkit-full-screen .reader-label { display: none; }
+    .comic-viewer-container:-webkit-full-screen .back-btn { display: flex; }
+
+    /* ---- PSEUDO-FULLSCREEN FALLBACK (For iOS iPhones) ---- */
+    .comic-viewer-container.pseudo-fullscreen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      max-width: 100%;
+      z-index: 99999;
+      background: #000;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .comic-viewer-container.pseudo-fullscreen .reader-embed-wrapper {
+      max-width: 100%; height: 100vh; margin: 0; border: none; border-radius: 0; display: flex; flex-direction: column; flex: 1;
+    }
+    .comic-viewer-container.pseudo-fullscreen iframe {
+      flex: 1; height: 100vh; min-height: 100vh;
+    }
+    .comic-viewer-container.pseudo-fullscreen .reader-label {
+      display: none;
+    }
+    .comic-viewer-container.pseudo-fullscreen .back-btn {
+      display: flex;
+    }
+
+    ::backdrop {
+      background: #000;
+    }
+
+    /* Mobile Device Hint */
+    .mobile-hint {
+      display: none;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 1.5rem;
+      font-family: 'Exo 2', sans-serif;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+
+    /* ============================================================
+       SCIENCE FACTS STRIP
+    ============================================================ */
+    .facts-strip {
+      background: var(--bg);
+      padding: 5rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 960px;
+      margin: 3rem auto 0;
+    }
+
+    .fact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem 1.5rem;
+      transition: all var(--transition);
+    }
+    .fact-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+    .fact-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+
+    .fact-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .fact-text {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       REFERENCE SECTION
+    ============================================================ */
+    .reference-strip {
+      padding: 3rem 2rem;
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .reference-box {
+      max-width: 640px;
+      margin: 1rem auto 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .footer-logo span { color: var(--accent); }
+
+    .footer-sub {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copyright {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 640px) {
+      nav { padding: 0 1rem; }
+      .nav-link { display: none; }
+      .hero { padding: 80px 1.2rem 3rem; }
+      .atom-bg { width: 320px; height: 320px; }
+      .atom-ring { transform-origin: center !important; }
+      #reader { padding: 3rem 0.75rem 4rem; }
+      .authors-grid { grid-template-columns: 1fr 1fr; }
+      .mobile-hint { display: block; }
+    }
+
+    @media (max-width: 400px) {
+      .authors-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       KEYBOARD NAV FOCUS STYLES
+    ============================================================ */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* Glow separator */
+    .glow-hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4;
+      margin: 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       STICKY NAVBAR
+  ============================================================ -->
+  <nav aria-label="Main navigation">
+    <a class="nav-logo" href="#top">⚛ Let There Be Light</a>
+    <div class="nav-controls">
+      <a class="nav-link" href="#authors">Authors</a>
+      <a class="nav-link" href="#reader">Read</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="toggle-icon" aria-hidden="true">☀️</span>
+        <span id="themeLabel">LIGHT</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero" id="top" aria-label="Hero section">
+
+    <!-- Animated atomic orbit background -->
+    <div class="atom-bg" aria-hidden="true">
+      <div class="atom-ring"></div>
+      <div class="atom-ring"></div>
+      <div class="atom-ring"></div>
+      <div class="atom-nucleus"></div>
+    </div>
+
+    <!-- Floating particles -->
+    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <!-- Hero content -->
+    <p class="hero-eyebrow">A Science Education Comic · Nuclear Energy</p>
+
+    <h1 class="hero-title">
+      Let There Be<br>
+      <span>Light</span>
+    </h1>
+
+    <p class="hero-tagline">In the darkest of worlds, we became the light.</p>
+
+    <div class="hero-cta-group">
+      <a class="btn btn-primary" href="#reader">
+        ⚡ Read the Comic
+      </a>
+      <a class="btn btn-outline" href="#authors">
+        👥 Meet the Authors
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SYNOPSIS STRIP
+  ============================================================ -->
+  <section class="synopsis-strip" aria-label="Synopsis">
+    <div class="synopsis-inner">
+      <p class="section-label">Synopsis</p>
+      <p class="synopsis-text">
+        Following the total exhaustion of Earth's resources, the ruthless CEO of <strong>Vance Energy Corp</strong>
+        assassinates a coalition of clean-energy scientists and divides Eos City into a wealthy Utopia and a freezing,
+        rationed slum. Sixteen-year-old <strong>Sirius</strong> — desperate to save his mother — infiltrates the elite
+        Uptown sector and crosses paths with <strong>Ernest</strong>, leader of the underground resistance
+        <em>Project Prometheus</em>. Operating from an abandoned nuclear cooling tower, the team launches a high-stakes
+        mission to restore power — using the principles of <strong>nuclear fission</strong> to ignite a revolution
+        and return the light to a city left in the dark.
+      </p>
+    </div>
+  </section>
+
+  <hr class="glow-hr" />
+
+  <!-- ============================================================
+       AUTHORS SECTION
+  ============================================================ -->
+  <section id="authors" aria-label="Authors">
+    <div style="padding: 6rem 2rem;">
+
+      <div class="section-header">
+        <p class="section-label">The Creators</p>
+        <h2 class="section-title">Meet the Authors</h2>
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-dot"></div>
+          <div class="divider-line"></div>
+        </div>
+        <p class="section-sub">Science Education Students — Bringing Physics to Life Through Story</p>
+      </div>
+
+      <!-- Group bio -->
+      <p class="group-bio">
+        <em>"Let There Be Light"</em> was crafted by a passionate group of <strong>Science Education students</strong>
+        whose mission is to make the science of nuclear energy accessible, compelling, and human. Inspired by real
+        physics and a shared belief in clean energy's potential, they built a world where knowledge becomes a weapon
+        against ignorance — and the key to a better future. All idea, concept, characters, story, and world-building
+        are solely the original work of this team.
+      </p>
+
+      <!-- Author cards -->
+      <div class="authors-grid">
+
+        <!-- Author 1 -->
+        <article class="author-card">
+          <img src="https://lh3.googleusercontent.com/d/1pJYdsbxlETJhT7QA9Qa9lkNxj-W4C0B9" alt="Danilo Cajilla" class="author-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="avatar-initials" style="display: none;">DC</div>
+          <h3 class="author-name">Danilo Cajilla</h3>
+          <p class="author-role">Lead Author</p>
+          <p class="author-bio">
+            Science Education student with a passion for nuclear physics and storytelling. Danilo served as
+            the primary architect of the world of Eos City and Project Prometheus.
+          </p>
+        </article>
+
+        <!-- Author 2 -->
+        <article class="author-card">
+          <img src="https://lh3.googleusercontent.com/d/10PReU4s-IX3DUrImbFc5-zTqMVCLspWR" alt="French Rocamora" class="author-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="avatar-initials" style="display: none;">FR</div>
+          <h3 class="author-name">French Rocamora</h3>
+          <p class="author-role">Author</p>
+          <p class="author-bio">
+            A Science Education student who contributed to the narrative development and the scientific
+            accuracy of the comic's nuclear concepts and character dynamics.
+          </p>
+        </article>
+
+        <!-- Author 3 -->
+        <article class="author-card">
+          <img src="https://lh3.googleusercontent.com/d/1Rv8f9GG4VP-y9pBvXrvtzrR7C8qg0SwH" alt="Eshtriel Natividad" class="author-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="avatar-initials" style="display: none;">EN</div>
+          <h3 class="author-name">Eshtriel Natividad</h3>
+          <p class="author-role">Author</p>
+          <p class="author-bio">
+            Science Education student who helped shape the visual storytelling direction and the thematic
+            integration of nuclear energy concepts throughout the comic.
+          </p>
+        </article>
+
+        <!-- Author 4 -->
+        <article class="author-card">
+          <img src="https://lh3.googleusercontent.com/d/10M8CuO2UxxdnzZMHdW8Dnep49MHu5yJc" alt="Erreca Cahayagan" class="author-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="avatar-initials" style="display: none;">EC</div>
+          <h3 class="author-name">Erreca Cahayagan</h3>
+          <p class="author-role">Author</p>
+          <p class="author-bio">
+            Science Education student whose research into nuclear physics and clean energy science
+            grounded the story in real-world principles of reactor criticality and mass-energy conversion.
+          </p>
+        </article>
+
+      </div><!-- / authors-grid -->
+
+    </div>
+  </section>
+
+  <hr class="glow-hr" />
+
+  <!-- ============================================================
+       COMIC READER SECTION
+  ============================================================ -->
+  <section id="reader" aria-label="Comic Reader">
+
+    <div style="padding-top:4rem; padding-bottom:1rem; text-align:center; padding-left:1rem; padding-right:1rem;">
+      <p class="section-label">Read the Comic</p>
+      <h2 class="section-title">Let There Be Light</h2>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-dot"></div>
+        <div class="divider-line"></div>
+      </div>
+      <p class="section-sub" style="margin-bottom:2.5rem;">Click below to launch the immersive reading experience.</p>
+
+      <!-- Reading Controls -->
+      <div class="reader-controls">
+        <button class="btn btn-primary" onclick="openFullscreenReader()" style="padding: 1rem 3rem; font-size: 1rem; box-shadow: 0 0 20px var(--accent-glow);">
+          📖 Read
+        </button>
+      </div>
+
+      <p class="mobile-hint">📱 For the best reading experience on mobile, rotate your device sideways.</p>
+    </div>
+
+    <!-- ---- BOOK VIEWER (Interactive Source Embed) ---- -->
+    <div class="book-viewer comic-viewer-container active" id="bookViewer">
+      <button class="back-btn" onclick="closeFullscreen()">← Back</button>
+      <div class="reader-embed-wrapper">
+        <div class="reader-label">
+          <span class="reader-dot"></span>
+          INTERACTIVE READER
+        </div>
+        <iframe
+          src="https://drive.google.com/file/d/10879mfos-XNc4j85aP4u86A9A79dFfrP/preview"
+          allowfullscreen
+          loading="lazy"
+          title="Let There Be Light — Interactive Comic Book View"
+        ></iframe>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       SCIENCE FACTS STRIP
+  ============================================================ -->
+  <section class="facts-strip" aria-label="Nuclear Energy Facts">
+    <div class="section-header">
+      <p class="section-label">The Science Behind the Story</p>
+      <h2 class="section-title">Nuclear Energy — Key Concepts</h2>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-dot"></div>
+        <div class="divider-line"></div>
+      </div>
+    </div>
+
+    <div class="facts-grid">
+
+      <div class="fact-card">
+        <div class="fact-icon">⚛️</div>
+        <h3 class="fact-title">Nuclear Fission</h3>
+        <p class="fact-text">
+          When a heavy nucleus (like Uranium-235) splits, it releases enormous energy — embodied in Einstein's
+          E = mc² — far exceeding any chemical reaction, enabling compact and long-lasting power generation.
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-icon">🔵</div>
+        <h3 class="fact-title">Cherenkov Radiation</h3>
+        <p class="fact-text">
+          The iconic blue glow seen in nuclear reactors: produced when charged particles travel faster than light
+          does in water — a real, beautiful phenomenon referenced throughout this comic.
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-icon">⚖️</div>
+        <h3 class="fact-title">Criticality (K=1)</h3>
+        <p class="fact-text">
+          A reactor achieves criticality when exactly one neutron from each fission triggers another fission.
+          Sirius's goal — balancing to K=1 — is the precise condition for a controlled, self-sustaining chain reaction.
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-icon">🌿</div>
+        <h3 class="fact-title">Clean Energy</h3>
+        <p class="fact-text">
+          Nuclear power produces virtually zero greenhouse gas emissions during operation. Modern reactors are
+          among the safest energy sources per unit of power generated — a vital tool in the clean energy transition.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       REFERENCE SECTION
+  ============================================================ -->
+  <section class="reference-strip" aria-label="Academic Reference">
+    <p class="section-label">Scientific Reference</p>
+    <div class="reference-box">
+      Young, H. D., &amp; Freedman, R. A. (2019).
+      <em>University Physics with Modern Physics</em> (15th ed.).
+      Pearson Higher Education.
+    </div>
+    <p style="margin-top:1rem; font-size:0.78rem; color:var(--text-dim);">
+      Visual elements were created with AI assistance as a creative tool. All ideas, concepts, characters,
+      story, and world-building are solely the original work of the authors.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="footer-logo">Let There Be <span>Light</span></div>
+    <p class="footer-sub">A Nuclear Energy Science Education Comic</p>
+    <p class="footer-copyright">
+      © 2025 Danilo Cajilla · French Rocamora · Eshtriel Natividad · Erreca Cahayagan.<br>
+      All rights reserved. Created as an academic work in Science Education.
+    </p>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ──────────────────────────────────────────────────────────────
+       1. THEME TOGGLE
+    ────────────────────────────────────────────────────────────── */
+    const html         = document.documentElement;
+    const themeToggle  = document.getElementById('themeToggle');
+    const themeLabel   = document.getElementById('themeLabel');
+    const toggleIcon   = themeToggle.querySelector('.toggle-icon');
+
+    // Persist preference
+    const saved = localStorage.getItem('ltbl-theme') || 'dark';
+    applyTheme(saved);
+
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      themeLabel.textContent = t === 'dark' ? 'LIGHT' : 'DARK';
+      toggleIcon.textContent = t === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('ltbl-theme', t);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    /* ──────────────────────────────────────────────────────────────
+       2. HERO PARTICLES
+    ────────────────────────────────────────────────────────────── */
+    (function spawnParticles() {
+      const container = document.getElementById('particles');
+      const count = 40;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDuration = (Math.random() * 12 + 6) + 's';
+        p.style.animationDelay    = (Math.random() * 10) + 's';
+        p.style.width = p.style.height = (Math.random() * 2 + 1) + 'px';
+        container.appendChild(p);
+      }
+    })();
+
+    /* ──────────────────────────────────────────────────────────────
+       3. FULLSCREEN HANDLER WITH MOBILE FALLBACK
+    ────────────────────────────────────────────────────────────── */
+    function openFullscreenReader() {
+      const container = document.getElementById('bookViewer');
+      if (!container) return;
+
+      // Track if we attempted native fullscreen
+      let nativeAttempt = false;
+
+      // Try native fullscreen API first
+      if (container.requestFullscreen) {
+        nativeAttempt = true;
+        container.requestFullscreen().catch(err => {
+          console.warn('Native fullscreen blocked, falling back to CSS fullscreen.');
+          enablePseudoFullscreen(container);
+        });
+      } else if (container.webkitRequestFullscreen) { /* Safari */
+        nativeAttempt = true;
+        container.webkitRequestFullscreen();
+      }
+
+      // Fallback for devices that don't support arbitrary element fullscreen (like iPhones)
+      if (!nativeAttempt || /iPhone|iPod/.test(navigator.userAgent)) {
+        enablePseudoFullscreen(container);
+      }
+    }
+
+    // CSS-based fullscreen for mobile compatibility
+    function enablePseudoFullscreen(container) {
+      container.classList.add('pseudo-fullscreen');
+      document.body.style.overflow = 'hidden'; // Stop background scrolling
+    }
+
+    function closeFullscreen() {
+      const container = document.getElementById('bookViewer');
+
+      // Exit Native Fullscreen
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        }
+      }
+
+      // Exit Pseudo-Fullscreen
+      if (container) {
+        container.classList.remove('pseudo-fullscreen');
+      }
+      document.body.style.overflow = ''; // Restore background scrolling
+    }
+
+  </script>
+
+</body>
+</html>
